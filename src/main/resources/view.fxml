@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.awd.nlp.controllers.View">
+   <children>
+      <BorderPane layoutX="200.0" layoutY="100.0" prefHeight="200.0" />
+      <Button fx:id="testButton" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleTestButtonClick" text="Load file" />
+      <TextArea fx:id="inputArea" editable="false" layoutX="14.0" layoutY="50.0" prefHeight="50.0" prefWidth="200.0" promptText="Write text..." />
+      <TextArea fx:id="resultArea" editable="false" layoutX="386.0" layoutY="50.0" prefHeight="50.0" prefWidth="200.0" />
+      <Button fx:id="checkButton" layoutX="266.0" layoutY="63.0" mnemonicParsing="false" onAction="#handleCheckButtonClick" text="Check =&gt;" />
+      <Label fx:id="labelFile" layoutX="92.0" layoutY="18.0" textFill="#3ce130" />
+   </children>
+</AnchorPane>
