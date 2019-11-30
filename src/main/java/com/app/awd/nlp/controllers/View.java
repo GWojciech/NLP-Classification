@@ -1,14 +1,12 @@
 package com.app.awd.nlp.controllers;
 
-import com.app.awd.nlp.NaiveBayesAlgorithm;
+import com.app.awd.nlp.TweetClassifier;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -20,7 +18,10 @@ public class View extends Application {
     private Button testButton;
 
     @FXML
-    private Label labelFile;
+    private Label labelFileLearn;
+
+    @FXML
+    private Label labelFileTest;
 
     @FXML
     private TextArea inputArea;
@@ -31,7 +32,22 @@ public class View extends Application {
     @FXML
     private Button checkButton;
 
-    private NaiveBayesAlgorithm naiveBayesAlgorithm ;
+    @FXML
+    private Button learnButton;
+
+    @FXML
+    private TextArea trainingInfoArea;
+
+    @FXML
+    private ChoiceBox<String> ChoiceBox;
+
+    @FXML
+    private Spinner<Integer> spinnerIterations;
+
+    @FXML
+    private Spinner<Integer> spinnerCutoff;
+
+    private TweetClassifier tweetClassifier;
 
     public static void main(String[] args) {
         launch(args);
@@ -47,7 +63,7 @@ public class View extends Application {
     }
 
     @FXML
-    void handleTestButtonClick() throws Exception{
+    void handleLearnButtonClick() throws Exception{
         File recordsDir = new File(System.getProperty("user.dir"));
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(recordsDir);
@@ -55,20 +71,41 @@ public class View extends Application {
 
         if (selectedFile != null) {
 
-            naiveBayesAlgorithm = new NaiveBayesAlgorithm(selectedFile.getAbsolutePath());
-            labelFile.setText("Learning file: " + selectedFile.getName());
-            naiveBayesAlgorithm.trainModel();
+            tweetClassifier = new TweetClassifier(selectedFile.getAbsolutePath());
+            labelFileLearn.setText("Learning file: " + selectedFile.getName());
+            tweetClassifier.trainModel(ChoiceBox.getSelectionModel().getSelectedItem(), spinnerIterations.getValue(), spinnerCutoff.getValue());
             inputArea.setEditable(true);
+            testButton.setDisable(false);
+            labelFileTest.setText("");
+            trainingInfoArea.setText("Model created!\nLoad test data or write on the area and check.");
         }
         else {
-            labelFile.setText("Load file one more time!");
+            labelFileLearn.setText("Load file one more time!");
+            testButton.setDisable(false);
+            inputArea.setEditable(false);
         }
     }
 
     @FXML
-    void handleCheckButtonClick()throws Exception{
-        resultArea.setText(naiveBayesAlgorithm.classifyNewTweet(inputArea.getText()));
+    void handleTestButtonClick() throws Exception {
+        File recordsDir = new File(System.getProperty("user.dir"));
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(recordsDir);
+        File selectedFile = fileChooser.showOpenDialog(null);
+
+        if (selectedFile != null) {
+            trainingInfoArea.setText(tweetClassifier.testData(selectedFile.getAbsolutePath()));
+            labelFileTest.setText("Test file: " + selectedFile.getName());
+        }
+        else
+            labelFileTest.setText("Load file one more time!");
     }
+
+    @FXML
+    void handleCheckButtonClick()throws Exception{
+        resultArea.setText(tweetClassifier.classifyNewTweet(inputArea.getText()));
+    }
+
 
 
 }
