@@ -29,17 +29,17 @@ public class View extends Application {
     @FXML
     private TextArea resultArea;
 
-    @FXML
-    private Button checkButton;
-
-    @FXML
-    private Button learnButton;
+//    @FXML
+//    private Button checkButton;
+//
+//    @FXML
+//    private Button learnButton;
 
     @FXML
     private TextArea trainingInfoArea;
 
     @FXML
-    private ChoiceBox<String> ChoiceBox;
+    private ChoiceBox<String> choiceBox;
 
     @FXML
     private Spinner<Integer> spinnerIterations;
@@ -73,7 +73,7 @@ public class View extends Application {
 
             tweetClassifier = new TweetClassifier(selectedFile.getAbsolutePath());
             labelFileLearn.setText("Learning file: " + selectedFile.getName());
-            tweetClassifier.trainModel(ChoiceBox.getSelectionModel().getSelectedItem(), spinnerIterations.getValue(), spinnerCutoff.getValue());
+            tweetClassifier.trainModel(choiceBox.getSelectionModel().getSelectedItem(), spinnerIterations.getValue(), spinnerCutoff.getValue());
             inputArea.setEditable(true);
             testButton.setDisable(false);
             labelFileTest.setText("");
