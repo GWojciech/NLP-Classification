@@ -12,7 +12,7 @@ public class TweetClassifier {
     String nameOfFile;
 
     public TweetClassifier() {
-        nameOfFile = "tweetyRef.csv";
+        nameOfFile = "Files/tweetyRef.csv";
     }
 
     public TweetClassifier(String nameOfFile) {
@@ -21,12 +21,12 @@ public class TweetClassifier {
 
     public static void main(String[] args) {
         TweetClassifier twitterCategorizer = new TweetClassifier();
-        twitterCategorizer.trainModel("NAIVEBAYES", 1, 1);
+        twitterCategorizer.trainModel("NAIVEBAYES", 1, 0);
         String text = "";
         Scanner sc = new Scanner(System.in);
         while (!text.equals("stop")) {
             text = sc.nextLine();
-            twitterCategorizer.classifyNewTweet(text);
+            System.out.println(twitterCategorizer.classifyNewTweet(text));
         }
     }
 
@@ -62,20 +62,20 @@ public class TweetClassifier {
     public String classifyNewTweet(String tweet) {
         DocumentCategorizer doccat = new DocumentCategorizerME(model);
         String [] docWords = tweet.split(" ");
+        StringBuilder value;
         double[] aProbs = doccat.categorize(docWords);
-        System.out.println("\n---------------------------------\nCategory : Probability\n---------------------------------");
-        for (int i = 0; i < doccat.getNumberOfCategories(); i++) {
-            System.out.println(doccat.getCategory(i) + " : " + aProbs[i]);
-        }
-        System.out.println("---------------------------------");
         if (doccat.getBestCategory(aProbs).equals("0")) {
-            return ("The tweet is negative :( ");
+            value = new StringBuilder("The tweet is negative :(\n");
         } else if (doccat.getBestCategory(aProbs).equals("1")) {
-            return ("The tweet is neutral :| ");
+            value = new StringBuilder("The tweet is neutral :|\n");
         } else {
-            return ("The tweet is positive :) ");
-
+            value = new StringBuilder("The tweet is positive :)\n");
         }
+        value.append("Category : Probability\n");
+        for (int i = 0; i < doccat.getNumberOfCategories(); i++) {
+            value.append(doccat.getCategory(i)).append(" : ").append(aProbs[i]).append("\n");
+        }
+        return value.toString();
     }
 
     //testowanie danych z pliku
@@ -86,6 +86,9 @@ public class TweetClassifier {
         int i = 0, correctClassifications = 0;
         double[] aProbs;
         String[] data, docWords;
+        int [] correctClassClassification = new int[3];
+        int [] allClassElements = new int[3];
+
         while ((row = csvReader.readLine()) != null) {
             i++;
             data = row.split("\t");
@@ -93,10 +96,16 @@ public class TweetClassifier {
             aProbs = doccat.categorize(docWords);
             if (doccat.getBestCategory(aProbs).equals(data[0])) {
                 correctClassifications++;
+                correctClassClassification[Integer.parseInt(data[0])]++;
             }
+            allClassElements[Integer.parseInt(data[0])]++;
         }
         csvReader.close();
         return "Test file: \nCorrect classifications: " + correctClassifications + "/" + i +
-                " (" +  String.format("%.2f", (double)correctClassifications/i * 100) + "%)";
+                " (" +  String.format("%.2f", (double)correctClassifications/i * 100) + "%)\n" +
+                "By class:\n"+
+                "Negative(0): " + correctClassClassification[0] + "/" + allClassElements[0] + " (" +String.format("%.2f", (double)correctClassClassification[0]/allClassElements[0] * 100) + "%)\n"+
+                "Neutral(1): " + correctClassClassification[1] + "/" + allClassElements[1] + " (" + String.format("%.2f", (double)correctClassClassification[1]/allClassElements[1] * 100) + "%)\n"+
+                "Positive(2): " + correctClassClassification[2] + "/" + allClassElements[2] + " (" + String.format("%.2f", (double)correctClassClassification[2]/allClassElements[2] * 100) + "%)";
     }
 }
